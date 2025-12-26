@@ -9,7 +9,7 @@ from PIL import Image
 st.set_page_config(page_title="ExtractoAI Pro", layout="wide")
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-3-flash')
 
 # 2. Sidebar (Your Name Highlight)
 with st.sidebar:
@@ -42,4 +42,5 @@ with col_right:
             edited_df = st.data_editor(df, use_container_width=True) # Editable Table
             
             # Download Button
+
             st.download_button("📥 Download Excel", edited_df.to_csv().encode('utf-8'), "data.csv")
