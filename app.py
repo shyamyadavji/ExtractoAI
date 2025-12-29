@@ -14,7 +14,7 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 # 2. Sidebar (Your Name Highlight)
 with st.sidebar:
     st.title("📑 ExtractoAI")
-    st.success("Developer: **[YOUR NAME]**") # Change this to your name!
+    st.success("Developer: **[Shyam Yadav]**") # Change this to your name!
     st.info("Status: Live & Professional")
 
 # 3. Main UI
@@ -44,6 +44,7 @@ with col_right:
             # Download Button
 
             st.download_button("📥 Download Excel", edited_df.to_csv().encode('utf-8'), "data.csv")
+
 
 
 
