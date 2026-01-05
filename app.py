@@ -3,92 +3,104 @@ import google.generativeai as genai
 import pandas as pd
 import json
 import os
+import io
 from PIL import Image
 from dotenv import load_dotenv
 
-# --- 1. PROFESSIONAL CONFIGURATION ---
+# --- 1. PROFESSIONAL SEO & DASHBOARD CONFIG ---
 st.set_page_config(
-    page_title="ExtractoAI | Intelligence Dashboard",
+    page_title="ExtractoAI Pro | Intelligence Dashboard",
     page_icon="📑",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        'About': "# ExtractoAI by Shyam Yadav\nProfessional AI Data Extraction. [Visit extractoai.online](https://extractoai.online)"
+    }
 )
 
-# Custom CSS for 2026 SaaS Look
+# Professional CSS for 2026 SaaS Dashboard Look
 st.markdown("""
     <style>
     .main { background-color: #f8fafc; }
-    .stButton>button { width: 100%; border-radius: 8px; background-color: #2563eb; color: white; font-weight: bold; }
+    .stButton>button { 
+        width: 100%; 
+        border-radius: 8px; 
+        background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%); 
+        color: white; 
+        font-weight: bold; 
+        height: 3em;
+        border: none;
+    }
     .stMetric { background-color: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     [data-testid="stSidebar"] { background-color: #1e293b; color: white; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. SECURITY & KEYS ---
+# --- 2. API SETUP ---
 load_dotenv()
-# Logic to handle both Local (.env) and Streamlit Cloud (Secrets)
+# Handles both Local and Streamlit Cloud
 api_key = os.getenv("GOOGLE_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
 
 if not api_key:
-    st.error("⚠️ API Key not found! Add it to your .env file or Streamlit Secrets.")
+    st.error("⚠️ API Key not found! Add it to your .env file or Streamlit Cloud Secrets.")
     st.stop()
 
 genai.configure(api_key=api_key)
 
-# We use gemini-2.0-flash-lite for 2026 stability and free-tier speed
+# Using your confirmed working model
 model = genai.GenerativeModel('gemini-3-flash-preview')
 
-# --- 3. THE BRAIN (Professional System Prompt) ---
+# --- 3. THE PROFESSIONAL BRAIN (System Prompt) ---
 SYSTEM_PROMPT = """
-ACT AS: A Senior Document Intelligence Expert.
-IMAGE ANALYSIS RULES:
-1. Identify the TYPE of document (Handwritten list, Financial table, Infographic, or Roadmap).
-2. If it is a TABLE: Extract every row and column accurately.
-3. If it is HANDWRITTEN: Recognize Hindi/English mixed text (e.g., '10 दर्जन' or 'विजय मौर्या'). 
-4. If it is a ROADMAP/INFOGRAPHIC: Extract the main categories as 'Headers' and bullet points as 'Data'.
-5. CLEANING: Remove UI elements like 'likes', 'video icons', or 'Follow' buttons from screenshots.
+ACT AS: A Senior Document Intelligence Expert and Data Analyst.
+TASK: Extract every piece of data from the image into a clean, structured JSON format.
 
-OUTPUT FORMAT: Return ONLY a valid JSON object. 
-Structure:
+RULES:
+1. IDENTIFY: Determine if the image is a table, a handwritten list, or an infographic.
+2. HANDWRITING: Handle messy text and Hindi characters (Devanagari) with 100% precision.
+3. CONTEXT: Understand the relationship between items and prices (e.g., Qty x Rate = Total).
+4. CLEANING: Ignore social media icons, 'Follow' buttons, or video UI elements.
+
+OUTPUT FORMAT: Return ONLY a valid JSON object.
 {
   "document_type": "string",
   "summary": "string",
-  "extracted_data": [ {"Column1": "Value", "Column2": "Value"} ],
+  "extracted_data": [ {"Description": "Value", "Amount": "Value"} ],
   "confidence_score": "float"
 }
 """
 
-# --- 4. SIDEBAR (Personal Brand Highlight) ---
+# --- 4. SIDEBAR (Personal Brand & SEO) ---
 with st.sidebar:
     st.title("📑 ExtractoAI v2.5")
     st.markdown("---")
     st.subheader("👤 Developer Profile")
-    st.success(f"**Shyam Yadav**") # Your Name Highlighted
+    st.success(f"**Shyam Yadav**") 
     st.write("IT Engineering Student")
-    st.info("System: 2026 Stable AI")
+    
+    st.markdown("🌐 [Official: extractoai.online](https://extractoai.online)")
     
     st.divider()
     st.write("🔗 [LinkedIn](https://linkedin.com/in/shyamyadavji)")
     st.write("📂 [GitHub](https://github.com/shyamyadavji)")
 
-# --- 5. DASHBOARD HEADER ---
+# --- 5. DASHBOARD METRICS ---
 st.title("AI Document Intelligence Platform")
-st.markdown("##### Professional OCR & Data Extraction for Complex Documents")
+st.markdown("##### High-Speed Extraction for 2026 Enterprises")
 
-# Metrics Row
 m1, m2, m3 = st.columns(3)
-m1.metric("Engine", "Gemini 2.0 Flash", "Stable")
-m2.metric("Processing Time", "1.2s", "-0.3s")
-m3.metric("Multi-Language", "Active", "Hindi/Eng")
+m1.metric("Current Engine", "Gemini 3 Flash", "Frontier")
+m2.metric("Intelligence", "Multimodal", "Active")
+m3.metric("Language", "Global (incl. Hindi)", "Enabled")
 
 st.divider()
 
 # --- 6. MAIN WORKSPACE ---
-col_left, col_right = st.columns([1, 1])
+col_left, col_right = st.columns([1, 1.2])
 
 with col_left:
-    st.subheader("📤 Input Source")
-    uploaded_file = st.file_uploader("Upload Image (Receipt, Table, or Roadmap)", type=["jpg", "jpeg", "png"])
+    st.subheader("📤 Source Image")
+    uploaded_file = st.file_uploader("Upload Receipt, Table, or Roadmap", type=["jpg", "jpeg", "png"])
     
     if uploaded_file:
         img = Image.open(uploaded_file)
@@ -99,46 +111,46 @@ with col_right:
     
     if uploaded_file:
         if st.button("🚀 Execute Smart Extraction"):
-            with st.spinner("AI analyzing structure and language..."):
+            with st.spinner("Gemini 3 is thinking..."):
                 try:
-                    # AI Call
+                    # AI Processing
                     response = model.generate_content([SYSTEM_PROMPT, img])
                     
-                    # Clean response to ensure valid JSON
+                    # Ensure the response is valid JSON
                     json_str = response.text.replace("```json", "").replace("```", "").strip()
                     data = json.loads(json_str)
                     
-                    # Display Metadata
-                    st.write(f"**Type:** {data.get('document_type', 'General')}")
-                    st.write(f"**Summary:** {data.get('summary', 'Processed successfully')}")
+                    # Show Result Summary
+                    st.write(f"**Document Type:** {data.get('document_type', 'General')}")
+                    st.write(f"**AI Summary:** {data.get('summary', 'Scan successful.')}")
                     
-                    # Show the Table
+                    # Display the Table
                     if data.get('extracted_data'):
                         df = pd.DataFrame(data['extracted_data'])
                         
-                        # THE EDITABLE TABLE (SaaS Level)
+                        # THE EDITABLE TABLE (SaaS Feature)
                         edited_df = st.data_editor(df, use_container_width=True, num_rows="dynamic")
                         
-                        # Download Section
-                        csv = edited_df.to_csv(index=False).encode('utf-8')
+                        # EXCEL DOWNLOAD LOGIC (.xlsx)
+                        buffer = io.BytesIO()
+                        with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+                            edited_df.to_excel(writer, index=False)
+                        
                         st.download_button(
-                            label="📥 Export to Excel (CSV)",
-                            data=csv,
-                            file_name=f"extracto_{data['document_type']}.csv",
-                            mime="text/csv"
+                            label="📥 Download Professional Excel (.xlsx)",
+                            data=buffer.getvalue(),
+                            file_name=f"ExtractoAI_{data['document_type']}.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         )
                     
-                    st.success(f"Confidence: {data.get('confidence_score', 'N/A')}")
+                    st.success(f"AI Confidence: {data.get('confidence_score', 'N/A')}")
                     
                 except Exception as e:
-                    st.error(f"Error: {e}")
-                    st.info("The AI might have exceeded the free rate limit. Please wait 60 seconds and try again.")
+                    st.error(f"Analysis Failed: {e}")
+                    st.info("Try refreshing or check if your API key has enough quota.")
     else:
-        st.info("Please upload a document to begin the AI analysis.")
+        st.info("Upload a document on the left to begin.")
 
 # --- 7. FOOTER ---
 st.divider()
-st.caption("ExtractoAI Project | Built for Portfolio | Jan 2026")
-
-
-
+st.caption("ExtractoAI.online | Developed by Shyam Yadav | 2026")
