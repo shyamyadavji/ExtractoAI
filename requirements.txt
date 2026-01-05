@@ -4,3 +4,4 @@ pandas
 pillow
 python-dotenv
 supabase
+openpyxl
